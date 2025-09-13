@@ -1,0 +1,12 @@
+---
+-  name: Create VLANs on EXOS Switches
+   hosts: switches
+   gather_facts: no
+     
+   tasks:
+     - name: Create VLANs
+       community.network.exos_config:
+         lines:
+           - create vlan {{ vlan_name }} tag {{ vlan_id }}
+         match: none
+         save_when: changed

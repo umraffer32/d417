@@ -1,0 +1,12 @@
+from netmiko import (ConnectHandler)
+
+exos_host = "10.10.1.31"
+
+switch = {'host': 'exos_host', 'port': '22', 'username': 'admin', 'password': 'P@ssw0rd','device_type': 'extreme_exos'}
+
+connection = ConnectHandler(**switch)
+
+show_vlan = connection.send_command('show vlan | grep VR')
+print(show_vlan)
+
+connection.disconnect()

@@ -1,0 +1,22 @@
+---
+- name: Ping Linux Nodes
+  hosts: linux
+
+  tasks:
+    - name: Ping all Linux nodes
+      ansible.builtin.ping:
+
+- name: Ping windows nodes
+  hosts: windows
+  gather_facts: false
+  become: false
+  tasks:
+    - name: ping all windows nodes
+      ansible.windows.win_ping:
+
+- name: Ping EXOS switches
+  hosts: exos
+  gather_facts: false
+  tasks:
+    - name: Ping all EXOS switches except main
+      ansible.builtin.ping:
