@@ -1,0 +1,79 @@
+# inventory.ini
+[switches]
+it_switch   ansible_host=10.10.1.30
+mgmt_switch ansible_host=10.10.1.31
+acct_switch ansible_host=10.10.1.32
+user_switch ansible_host=10.10.1.22
+
+[windows_user_desktops]
+win1 ansible_host=10.10.2.11 local_username=DesktopUser1
+win2 ansible_host=10.10.2.12 local_username=DesktopUser2
+win3 ansible_host=10.10.2.13 local_username=DesktopUser3
+win4 ansible_host=10.10.2.14 local_username=DesktopUser4
+
+[windows_testboxes_acct]
+acct_box ansible_host=10.10.3.21 local_username=TestUser1
+
+[windows_testboxes_mgmt]
+mgmt_box ansible_host=10.10.4.21 local_username=TestUser2
+
+[windows:children]
+windows_user_desktops
+windows_testboxes_acct
+windows_testboxes_mgmt
+
+# group vars (shared)
+[all:vars]
+local_password=WGU123
+
+# connection vars
+[switches:vars]
+ansible_network_os=community.network.exos
+ansible_connection=network_cli
+ansible_user=admin
+# ansible_ssh_private_key_file=~/.ssh/adminkey  # or ansible_password=...
+
+[windows:vars]
+ansible_connection=winrm
+ansible_user=Administrator
+ansible_password=YourAdminPwd
+ansible_winrm_transport=ntlm
+ansible_winrm_server_cert_validation=ignore
+============================================================================
+============================================================================
+# users.yaml
+---
+- name: Switch accounts (EXOS)
+  hosts: switches
+  gather_facts: no
+  tasks:
+    - name: Ensure Local-Admin exists (read/write)
+      community.network.exos_config:
+        lines:
+          - create account Local-Admin WGU123
+          - configure account Local-Admin access read-write
+      vars:
+        ansible_command_timeout: 60
+
+    - name: Save configuration
+      community.network.exos_command:
+        commands: ['save configuration']
+
+- name: Windows local users (desktops + test boxes)
+  hosts: windows
+  gather_facts: no
+  tasks:
+    - name: Ensure local user present
+      ansible.windows.win_user:
+        name: "{{ local_username }}"
+        password: "{{ local_password }}"
+        state: present
+        password_never_expires: yes
+        account_disabled: no
+
+    - name: Ensure user is Local Admin
+      ansible.windows.win_group_membership:
+        name: Administrators
+        members:
+          - "{{ local_username }}"
+        state: present
