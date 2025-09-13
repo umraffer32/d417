@@ -1,0 +1,2 @@
+scp -o IdentitiesOnly=yes -o PubkeyAuthentication=no -o PreferredAuthentications=password \
+    ~/.ssh/id_rsa.pub admin@10.10.1.22:/usr/local/cfg/
