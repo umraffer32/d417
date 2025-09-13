@@ -1,10 +1,10 @@
 from netmiko import (ConnectHandler)
 
 targets = [
-	{'host': '10.10.1.30', 'name': 'IT_Network',   'vid': 10},
-	{'host': '10.10.1.31', 'name': 'MGMT_Network', 'vid': 20},
-	{'host': '10.10.1.32', 'name': 'ACCT_Network', 'vid': 30},
-	{'host': '10.10.1.22', 'name': 'USER_Network', 'vid': 40}]
+	{'host': '10.10.1.30', 'name': 'IT_Network',   'vid': 100},
+	{'host': '10.10.1.31', 'name': 'MGMT_Network', 'vid': 200},
+	{'host': '10.10.1.32', 'name': 'ACCT_Network', 'vid': 300},
+	{'host': '10.10.1.22', 'name': 'USER_Network', 'vid': 400}]
 	
 common = {
 	'device_type': 'extreme_exos',
